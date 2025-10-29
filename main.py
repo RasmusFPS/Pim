@@ -4,27 +4,37 @@ last_x = None
 last_y = None
 current_color = "white"
 current_width = 4
+history_lines = []
+current_line = []
 
 def start_drawing(event):
     global last_x, last_y
     last_x = event.x
     last_y = event.y
 
+    current_line = []
+
 def draw(event):
     global last_x, last_y
     if last_x is not None and last_y is not None:
-        canvas.create_line(last_x, last_y, event.x, event.y,
+        item_id = canvas.create_line(last_x, last_y, event.x, event.y,
                             fill=current_color,
                             width=current_width,
                             capstyle=tk.ROUND,
                             smooth=True)
+        current_line.append(item_id)
         last_x = event.x
         last_y = event.y
 
 def stop_drawing(event):
-    global last_x, last_y
+    global last_x, last_y, current_line
     last_x = None
     last_y = None
+
+    if current_line:
+        history_lines.append(current_line)
+
+    current_line = []
 
 def erase(event):
     global current_color, current_width
@@ -32,6 +42,13 @@ def erase(event):
     current_color = "white"
     root.title("Pim (Erase Mode)")
 
+def undo(event):
+    root.title("Pim (Undid your last action)")
+    if history_lines:
+        last_stroke = history_lines.pop()
+
+        for item_id in last_stroke:
+            canvas.delete(item_id)
 
 def pen(event):
     global current_color, current_width
@@ -53,6 +70,7 @@ def minus(event):
 def update_width():
     width_label.config(text=f"Width: {current_width}")
 
+
 root = tk.Tk()
 root.title("Pim")
 
@@ -72,5 +90,6 @@ root.bind("<e>", erase, update_width())
 root.bind("<p>", pen, update_width())
 root.bind("<plus>", add)
 root.bind("<minus>", minus)
+root.bind("<u>", undo)
 
 root.mainloop()
