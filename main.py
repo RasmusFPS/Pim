@@ -1,5 +1,5 @@
 import tkinter as tk
-
+import os
 last_x = None
 last_y = None
 current_color = "white"
@@ -80,7 +80,8 @@ canvas.pack(fill="both", expand=True)
 width_label = tk.Label(root, text=f"Width: {current_width}", font=("Arial", 12), bg="lightgrey", padx=5, pady=2)
 width_label.place(relx=1.0, rely=1.0, x=-10, y=-10, anchor='se')
 
-root.iconbitmap('C:/source/repos/MS-Paint-clone/paintbrush.ico')
+icon_path = os.path.join(os.path.dirname(__file__), "Assets", "paintbrush.ico")
+root.iconbitmap(icon_path)
 
 canvas.bind("<Button-1>", start_drawing)
 canvas.bind("<B1-Motion>", draw)
